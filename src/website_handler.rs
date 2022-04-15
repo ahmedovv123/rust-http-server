@@ -1,9 +1,9 @@
-use super::http::{ Request, Response, StatusCode, Method };
+use super::http::{Method, Request, Response, StatusCode};
 
 use super::server::Handler;
 use std::fs;
 pub struct WebsiteHandler {
-    public_path: String
+    public_path: String,
 }
 
 impl WebsiteHandler {
@@ -21,8 +21,8 @@ impl WebsiteHandler {
                     println!("Directory Traversal Attack Attempted: {}", file_path);
                     None
                 }
-            },
-            Err(_) => None
+            }
+            Err(_) => None,
         }
     }
 }
@@ -35,15 +35,15 @@ impl Handler for WebsiteHandler {
                 "/hello" => Response::new(StatusCode::Ok, self.read_file("hello.html")),
                 path => match self.read_file(path) {
                     Some(contents) => Response::new(StatusCode::Ok, Some(contents)),
-                    None => Response::new(StatusCode::NotFound, None)
-                }
-            }
-            _ => Response::new(StatusCode::NotFound, None)
+                    None => Response::new(StatusCode::NotFound, None),
+                },
+            },
+            _ => Response::new(StatusCode::NotFound, None),
         }
     }
 
     fn handle_bad_request(&mut self, e: &crate::http::ParseError) -> Response {
         println!("Failed to parse request: {}", e);
         Response::new(StatusCode::BadRequest, None)
-    }   
+    }
 }
